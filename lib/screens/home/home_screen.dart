@@ -6,6 +6,7 @@ import '../auth/login_screen.dart';
 import '../../services/auth_service.dart';
 import '../../services/data_service.dart';
 import 'history_screen.dart';
+import 'clinical_support_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = const [
     _DashboardPage(),
     TodoScreen(),
+    ClinicalSupportScreen(),
     _ProfilePage(),
   ];
 
@@ -45,9 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.white,
           selectedItemColor: const Color(0xFF2563EB),
           unselectedItemColor: const Color(0xFF94A3B8),
-          selectedLabelStyle:
-              const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
           unselectedLabelStyle: const TextStyle(fontSize: 12),
+          type: BottomNavigationBarType.fixed,
           elevation: 0,
           items: const [
             BottomNavigationBarItem(
@@ -59,6 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icon(Icons.checklist_outlined),
               activeIcon: Icon(Icons.checklist),
               label: 'To-Do',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.medical_services_outlined),
+              activeIcon: Icon(Icons.medical_services),
+              label: 'Clinical',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
@@ -83,14 +93,12 @@ class _DashboardPageState extends State<_DashboardPage> {
   String _userName = '';
   bool _isLoading = true;
 
-  // Latest log metrics
   double _sleep = 0;
   double _work = 0;
   double _screen = 0;
   double _exercise = 0;
   String _moodEmoji = '😊';
 
-  // Weekly chart data (last 7 days)
   List<int> _sleepChart = [0, 0, 0, 0, 0, 0, 0];
   List<int> _workChart = [0, 0, 0, 0, 0, 0, 0];
   List<int> _screenChart = [0, 0, 0, 0, 0, 0, 0];
@@ -111,7 +119,6 @@ class _DashboardPageState extends State<_DashboardPage> {
         setState(() {
           _userName = profile?['name'] ?? 'there';
 
-          // Latest log for daily metrics
           if (logs.isNotEmpty) {
             final latest = logs.first;
             _sleep = latest.sleepHours;
@@ -121,8 +128,6 @@ class _DashboardPageState extends State<_DashboardPage> {
             _moodEmoji = latest.moodEmoji;
           }
 
-          // Build weekly chart — only use logs that have
-          // actual daily data (not stress check assessments)
           final dailyLogs = logs
               .where((l) =>
                   l.sleepHours > 0 ||
@@ -134,13 +139,11 @@ class _DashboardPageState extends State<_DashboardPage> {
               .reversed
               .toList();
 
-          // Reset to zeros first
           _sleepChart = List.filled(7, 0);
           _workChart = List.filled(7, 0);
           _screenChart = List.filled(7, 0);
           _exerciseChart = List.filled(7, 0);
 
-          // Fill from the right (most recent on right)
           final startIndex = 7 - dailyLogs.length;
           for (int i = 0; i < dailyLogs.length; i++) {
             _sleepChart[startIndex + i] = dailyLogs[i].sleepHours.round();
@@ -153,7 +156,9 @@ class _DashboardPageState extends State<_DashboardPage> {
         });
       }
     } catch (_) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -170,7 +175,10 @@ class _DashboardPageState extends State<_DashboardPage> {
     return SafeArea(
       child: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF2563EB)))
+              child: CircularProgressIndicator(
+                color: Color(0xFF2563EB),
+              ),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -180,18 +188,25 @@ class _DashboardPageState extends State<_DashboardPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.menu,
-                          color: Color(0xFF2563EB), size: 26),
-                      const Text('Mind Guard',
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF0F172A))),
+                      const Icon(
+                        Icons.menu,
+                        color: Color(0xFF2563EB),
+                        size: 26,
+                      ),
+                      const Text(
+                        'Mind Guard',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
                       GestureDetector(
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const HistoryScreen()),
+                            builder: (_) => const HistoryScreen(),
+                          ),
                         ),
                         child: Container(
                           width: 40,
@@ -200,8 +215,11 @@ class _DashboardPageState extends State<_DashboardPage> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.history,
-                              color: Color(0xFF2563EB), size: 22),
+                          child: const Icon(
+                            Icons.history,
+                            color: Color(0xFF2563EB),
+                            size: 22,
+                          ),
                         ),
                       ),
                     ],
@@ -210,25 +228,34 @@ class _DashboardPageState extends State<_DashboardPage> {
                   Text(
                     'Hello, $_userName 👋',
                     style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A)),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0F172A),
+                    ),
                   ),
                   const SizedBox(height: 4),
-                  const Text('Real-time mental health insights',
-                      style: TextStyle(fontSize: 13, color: Color(0xFF64748B))),
+                  const Text(
+                    'Real-time mental health insights',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
                   const SizedBox(height: 24),
 
-                  // Mood
                   Center(
                     child: Container(
                       width: 90,
                       height: 90,
                       decoration: const BoxDecoration(
-                          color: Color(0xFFFEF3C7), shape: BoxShape.circle),
+                        color: Color(0xFFFEF3C7),
+                        shape: BoxShape.circle,
+                      ),
                       child: Center(
-                        child: Text(_moodEmoji,
-                            style: const TextStyle(fontSize: 48)),
+                        child: Text(
+                          _moodEmoji,
+                          style: const TextStyle(fontSize: 48),
+                        ),
                       ),
                     ),
                   ),
@@ -244,7 +271,8 @@ class _DashboardPageState extends State<_DashboardPage> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const LogDataScreen()),
+                              builder: (_) => const LogDataScreen(),
+                            ),
                           ).then((_) => _loadData()),
                         ),
                       ),
@@ -256,7 +284,8 @@ class _DashboardPageState extends State<_DashboardPage> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const StressCheckScreen()),
+                              builder: (_) => const StressCheckScreen(),
+                            ),
                           ),
                         ),
                       ),
@@ -265,11 +294,14 @@ class _DashboardPageState extends State<_DashboardPage> {
 
                   const SizedBox(height: 28),
 
-                  const Text('Daily Metrics',
-                      style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF0F172A))),
+                  const Text(
+                    'Daily Metrics',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
                   const SizedBox(height: 12),
 
                   GridView.count(
@@ -281,38 +313,50 @@ class _DashboardPageState extends State<_DashboardPage> {
                     childAspectRatio: 1.8,
                     children: [
                       _MetricCard(
-                          icon: Icons.bedtime_outlined,
-                          iconColor: const Color(0xFF6366F1),
-                          label: 'SLEEP',
-                          value: _formatMetric(_sleep, false)),
+                        icon: Icons.bedtime_outlined,
+                        iconColor: const Color(0xFF6366F1),
+                        label: 'SLEEP',
+                        value: _formatMetric(_sleep, false),
+                      ),
                       _MetricCard(
-                          icon: Icons.work_outline,
-                          iconColor: const Color(0xFFF59E0B),
-                          label: 'WORK',
-                          value: _formatMetric(_work, false)),
+                        icon: Icons.work_outline,
+                        iconColor: const Color(0xFFF59E0B),
+                        label: 'WORK',
+                        value: _formatMetric(_work, false),
+                      ),
                       _MetricCard(
-                          icon: Icons.phone_android_outlined,
-                          iconColor: const Color(0xFF8B5CF6),
-                          label: 'SCREEN TIME',
-                          value: _formatMetric(_screen, false)),
+                        icon: Icons.phone_android_outlined,
+                        iconColor: const Color(0xFF8B5CF6),
+                        label: 'SCREEN TIME',
+                        value: _formatMetric(_screen, false),
+                      ),
                       _MetricCard(
-                          icon: Icons.bolt_outlined,
-                          iconColor: const Color(0xFFF59E0B),
-                          label: 'EXERCISE',
-                          value: _formatMetric(_exercise, true)),
+                        icon: Icons.bolt_outlined,
+                        iconColor: const Color(0xFFF59E0B),
+                        label: 'EXERCISE',
+                        value: _formatMetric(_exercise, true),
+                      ),
                     ],
                   ),
 
                   const SizedBox(height: 28),
 
-                  const Text('Weekly Trends',
-                      style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF0F172A))),
+                  const Text(
+                    'Weekly Trends',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  const Text('Last 7 logs performance',
-                      style: TextStyle(fontSize: 13, color: Color(0xFF64748B))),
+                  const Text(
+                    'Last 7 logs performance',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
                   const SizedBox(height: 12),
 
                   GridView.count(
@@ -343,8 +387,11 @@ class _ActionButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _ActionButton(
-      {required this.icon, required this.label, required this.onTap});
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -361,11 +408,14 @@ class _ActionButton extends StatelessWidget {
             Icon(icon, color: Colors.white, size: 22),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(label,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13)),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
             ),
           ],
         ),
@@ -380,32 +430,43 @@ class _MetricCard extends StatelessWidget {
   final String label;
   final String value;
 
-  const _MetricCard(
-      {required this.icon,
-      required this.iconColor,
-      required this.label,
-      required this.value});
+  const _MetricCard({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(16)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: iconColor, size: 24),
           const SizedBox(height: 4),
-          Text(label,
-              style: const TextStyle(
-                  fontSize: 10, color: Color(0xFF94A3B8), letterSpacing: 0.5)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              color: Color(0xFF94A3B8),
+              letterSpacing: 0.5,
+            ),
+          ),
           const SizedBox(height: 2),
-          Text(value,
-              style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0F172A))),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F172A),
+            ),
+          ),
         ],
       ),
     );
@@ -416,7 +477,10 @@ class _MiniChart extends StatelessWidget {
   final String label;
   final List<int> values;
 
-  const _MiniChart({required this.label, required this.values});
+  const _MiniChart({
+    required this.label,
+    required this.values,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -426,16 +490,21 @@ class _MiniChart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(16)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(
-                  fontSize: 10,
-                  color: Color(0xFF94A3B8),
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              color: Color(0xFF94A3B8),
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
           const SizedBox(height: 8),
           Expanded(
             child: Row(
@@ -444,6 +513,7 @@ class _MiniChart extends StatelessWidget {
               children: List.generate(values.length, (i) {
                 final heightRatio = maxVal > 0 ? values[i] / maxVal : 0.0;
                 final isLast = i == values.length - 1;
+
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -462,9 +532,13 @@ class _MiniChart extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(days[i],
-                        style: const TextStyle(
-                            fontSize: 8, color: Color(0xFF94A3B8))),
+                    Text(
+                      days[i],
+                      style: const TextStyle(
+                        fontSize: 8,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
                   ],
                 );
               }),
@@ -500,6 +574,7 @@ class _ProfilePageState extends State<_ProfilePage> {
     try {
       final profile = await AuthService().getProfile();
       final user = AuthService().currentUser;
+
       if (mounted) {
         setState(() {
           _name = profile?['name'] ?? 'Not set';
@@ -510,7 +585,9 @@ class _ProfilePageState extends State<_ProfilePage> {
         });
       }
     } catch (_) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -519,7 +596,9 @@ class _ProfilePageState extends State<_ProfilePage> {
     return SafeArea(
       child: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF2563EB)),
+              child: CircularProgressIndicator(
+                color: Color(0xFF2563EB),
+              ),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -540,11 +619,14 @@ class _ProfilePageState extends State<_ProfilePage> {
                       ),
                       const Expanded(
                         child: Center(
-                          child: Text('Profile',
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF0F172A))),
+                          child: Text(
+                            'Profile',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 48),
@@ -552,7 +634,6 @@ class _ProfilePageState extends State<_ProfilePage> {
                   ),
                   const SizedBox(height: 28),
 
-                  // Avatar with initials
                   Stack(
                     children: [
                       Container(
@@ -562,7 +643,9 @@ class _ProfilePageState extends State<_ProfilePage> {
                           color: const Color(0xFF2563EB),
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: const Color(0xFFBFDBFE), width: 3),
+                            color: const Color(0xFFBFDBFE),
+                            width: 3,
+                          ),
                         ),
                         child: Center(
                           child: Text(
@@ -585,8 +668,11 @@ class _ProfilePageState extends State<_ProfilePage> {
                             color: Color(0xFF2563EB),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.edit,
-                              color: Colors.white, size: 14),
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 14,
+                          ),
                         ),
                       ),
                     ],
@@ -594,7 +680,6 @@ class _ProfilePageState extends State<_ProfilePage> {
 
                   const SizedBox(height: 12),
 
-                  // Name below avatar
                   Text(
                     _name,
                     style: const TextStyle(
@@ -625,7 +710,9 @@ class _ProfilePageState extends State<_ProfilePage> {
 
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 16),
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(14),
@@ -640,18 +727,26 @@ class _ProfilePageState extends State<_ProfilePage> {
                             color: const Color(0xFFEFF6FF),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.lock_outline,
-                              color: Color(0xFF2563EB), size: 18),
+                          child: const Icon(
+                            Icons.lock_outline,
+                            color: Color(0xFF2563EB),
+                            size: 18,
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        const Text('Change Password',
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF0F172A))),
+                        const Text(
+                          'Change Password',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF0F172A),
+                          ),
+                        ),
                         const Spacer(),
-                        const Icon(Icons.chevron_right,
-                            color: Color(0xFF94A3B8)),
+                        const Icon(
+                          Icons.chevron_right,
+                          color: Color(0xFF94A3B8),
+                        ),
                       ],
                     ),
                   ),
@@ -666,16 +761,23 @@ class _ProfilePageState extends State<_ProfilePage> {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const LoginScreen()),
+                            builder: (_) => const LoginScreen(),
+                          ),
                           (route) => false,
                         );
                       },
-                      icon: const Icon(Icons.logout,
-                          color: Color(0xFFEF4444), size: 18),
-                      label: const Text('Sign Out',
-                          style: TextStyle(
-                              color: Color(0xFFEF4444),
-                              fontWeight: FontWeight.w600)),
+                      icon: const Icon(
+                        Icons.logout,
+                        color: Color(0xFFEF4444),
+                        size: 18,
+                      ),
+                      label: const Text(
+                        'Sign Out',
+                        style: TextStyle(
+                          color: Color(0xFFEF4444),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -696,7 +798,10 @@ class _ProfileField extends StatelessWidget {
   final String label;
   final String value;
 
-  const _ProfileField({required this.label, required this.value});
+  const _ProfileField({
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -713,21 +818,31 @@ class _ProfileField extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label,
-                    style: const TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFF94A3B8),
-                        letterSpacing: 0.5)),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF94A3B8),
+                    letterSpacing: 0.5,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(value,
-                    style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF0F172A))),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
               ],
             ),
           ),
-          const Icon(Icons.edit_outlined, color: Color(0xFF2563EB), size: 18),
+          const Icon(
+            Icons.edit_outlined,
+            color: Color(0xFF2563EB),
+            size: 18,
+          ),
         ],
       ),
     );
