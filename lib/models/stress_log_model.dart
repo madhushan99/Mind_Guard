@@ -1,9 +1,7 @@
 import 'base_model.dart';
 
-// Enum for mood (OOP concept — custom type)
 enum Mood { happy, neutral, stressed, sad }
 
-// INHERITANCE — StressLogModel extends BaseModel
 class StressLogModel extends BaseModel {
   final String userId;
   final double sleepHours;
@@ -27,12 +25,9 @@ class StressLogModel extends BaseModel {
     required this.notes,
   });
 
-  // POLYMORPHISM — overriding modelType
   @override
   String get modelType => 'StressLogModel';
 
-  // POLYMORPHISM — overriding toMap
-  @override
   @override
   Map<String, dynamic> toMap() {
     return {
@@ -63,14 +58,12 @@ class StressLogModel extends BaseModel {
     );
   }
 
-  // Computed property — stress level label
   String get stressLevel {
     if (stressScore <= 13) return 'Low';
     if (stressScore <= 26) return 'Moderate';
     return 'High';
   }
 
-  // Computed property — mood emoji
   String get moodEmoji {
     switch (mood) {
       case Mood.happy:

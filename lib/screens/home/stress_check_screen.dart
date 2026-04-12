@@ -395,9 +395,9 @@ class _StressCheckScreenState extends State<StressCheckScreen> {
     final advice = _bank.getAdvice(_stressPercentage);
 
     Color color;
-    if (_stressPercentage <= 25)
+    if (_stressPercentage <= 25) {
       color = const Color(0xFF22C55E);
-    else if (_stressPercentage <= 50)
+    } else if (_stressPercentage <= 50)
       color = const Color(0xFF3B82F6);
     else if (_stressPercentage <= 75)
       color = const Color(0xFFF59E0B);

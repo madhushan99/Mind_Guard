@@ -7,6 +7,13 @@ import '../../services/auth_service.dart';
 import '../../services/data_service.dart';
 import 'history_screen.dart';
 import 'clinical_support_screen.dart';
+import '../../theme/app_theme.dart';
+import '../../main.dart';
+import '../../breathing_screen.dart';
+import 'mood_tracker_screen.dart';
+import 'sleep_tracker_screen.dart';
+import 'screen_time_tracker_screen.dart';
+import '../../widgets/daily_motivation_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,12 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F4F8),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          boxShadow: const [
             BoxShadow(
               color: Color(0x0F000000),
               blurRadius: 20,
@@ -44,9 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (i) => setState(() => _currentIndex = i),
-          backgroundColor: Colors.white,
-          selectedItemColor: const Color(0xFF2563EB),
-          unselectedItemColor: const Color(0xFF94A3B8),
+          backgroundColor: Theme.of(context).cardColor,
+          selectedItemColor: AppTheme.primary,
+          unselectedItemColor: AppTheme.textSecondary,
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 12,
@@ -175,9 +182,7 @@ class _DashboardPageState extends State<_DashboardPage> {
     return SafeArea(
       child: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF2563EB),
-              ),
+              child: CircularProgressIndicator(color: AppTheme.primary),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -190,16 +195,12 @@ class _DashboardPageState extends State<_DashboardPage> {
                     children: [
                       const Icon(
                         Icons.menu,
-                        color: Color(0xFF2563EB),
+                        color: AppTheme.primary,
                         size: 26,
                       ),
-                      const Text(
+                      Text(
                         'Mind Guard',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF0F172A),
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                       GestureDetector(
                         onTap: () => Navigator.push(
@@ -212,12 +213,15 @@ class _DashboardPageState extends State<_DashboardPage> {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Theme.of(context).dividerColor,
+                            ),
                           ),
                           child: const Icon(
                             Icons.history,
-                            color: Color(0xFF2563EB),
+                            color: AppTheme.primary,
                             size: 22,
                           ),
                         ),
@@ -227,28 +231,20 @@ class _DashboardPageState extends State<_DashboardPage> {
                   const SizedBox(height: 24),
                   Text(
                     'Hello, $_userName 👋',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A),
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Real-time mental health insights',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF64748B),
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 24),
-
                   Center(
                     child: Container(
                       width: 90,
                       height: 90,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFFEF3C7),
+                        color: AppTheme.primaryLight,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -259,9 +255,8 @@ class _DashboardPageState extends State<_DashboardPage> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 24),
-
+                  const DailyMotivationCard(),
                   Row(
                     children: [
                       Expanded(
@@ -291,19 +286,54 @@ class _DashboardPageState extends State<_DashboardPage> {
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 28),
-
-                  const Text(
-                    'Daily Metrics',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: _ActionButton(
+                      icon: Icons.self_improvement,
+                      label: 'Breathing Exercise',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BreathingScreen(),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
-
+                  SizedBox(
+                    width: double.infinity,
+                    child: _ActionButton(
+                      icon: Icons.emoji_emotions_outlined,
+                      label: 'Mood Tracker',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const MoodTrackerScreen(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: _ActionButton(
+                      icon: Icons.bedtime_outlined,
+                      label: 'Sleep Tracker',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SleepTrackerScreen(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    'Daily Metrics',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 12),
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -324,7 +354,13 @@ class _DashboardPageState extends State<_DashboardPage> {
                         label: 'WORK',
                         value: _formatMetric(_work, false),
                       ),
-                      _MetricCard(
+                      _GestureMetricCard(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ScreenTimeTrackerScreen(),
+                          ),
+                        ),
                         icon: Icons.phone_android_outlined,
                         iconColor: const Color(0xFF8B5CF6),
                         label: 'SCREEN TIME',
@@ -338,27 +374,17 @@ class _DashboardPageState extends State<_DashboardPage> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 28),
-
-                  const Text(
+                  Text(
                     'Weekly Trends',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
-                    ),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Last 7 logs performance',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF64748B),
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 12),
-
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -373,7 +399,6 @@ class _DashboardPageState extends State<_DashboardPage> {
                       _MiniChart(label: 'EXERCISE', values: _exerciseChart),
                     ],
                   ),
-
                   const SizedBox(height: 24),
                 ],
               ),
@@ -395,29 +420,30 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF2563EB),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.white, size: 22),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
+    return Material(
+      color: AppTheme.primary,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.white, size: 22),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -439,35 +465,81 @@ class _MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: iconColor, size: 24),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppTheme.textSecondary,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: iconColor, size: 24),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              color: Color(0xFF94A3B8),
-              letterSpacing: 0.5,
+    );
+  }
+}
+
+class _GestureMetricCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+
+  const _GestureMetricCard({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.value,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: iconColor, size: 24),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppTheme.textSecondary,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0F172A),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -487,64 +559,62 @@ class _MiniChart extends StatelessWidget {
     final maxVal = values.reduce((a, b) => a > b ? a : b).toDouble();
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              color: Color(0xFF94A3B8),
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(values.length, (i) {
-                final heightRatio = maxVal > 0 ? values[i] / maxVal : 0.0;
-                final isLast = i == values.length - 1;
+            const SizedBox(height: 8),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(values.length, (i) {
+                  final heightRatio = maxVal > 0 ? values[i] / maxVal : 0.0;
+                  final isLast = i == values.length - 1;
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Flexible(
-                      child: FractionallySizedBox(
-                        heightFactor: heightRatio,
-                        child: Container(
-                          width: 8,
-                          decoration: BoxDecoration(
-                            color: isLast
-                                ? const Color(0xFF2563EB)
-                                : const Color(0xFFBFDBFE),
-                            borderRadius: BorderRadius.circular(4),
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Flexible(
+                        child: FractionallySizedBox(
+                          heightFactor: heightRatio,
+                          child: Container(
+                            width: 8,
+                            decoration: BoxDecoration(
+                              color: isLast
+                                  ? AppTheme.primary
+                                  : AppTheme.primaryLight,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      days[i],
-                      style: const TextStyle(
-                        fontSize: 8,
-                        color: Color(0xFF94A3B8),
+                      const SizedBox(height: 4),
+                      Text(
+                        days[i],
+                        style: const TextStyle(
+                          fontSize: 8,
+                          color: AppTheme.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }),
+                    ],
+                  );
+                }),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -563,11 +633,19 @@ class _ProfilePageState extends State<_ProfilePage> {
   String _age = '';
   String _occupation = '';
   bool _isLoading = true;
+  ThemeMode _selectedTheme = ThemeMode.system;
 
   @override
   void initState() {
     super.initState();
     _loadProfile();
+  }
+
+  void _changeTheme(ThemeMode mode) {
+    setState(() {
+      _selectedTheme = mode;
+    });
+    MindGuardApp.of(context)?.changeTheme(mode);
   }
 
   Future<void> _loadProfile() async {
@@ -596,9 +674,7 @@ class _ProfilePageState extends State<_ProfilePage> {
     return SafeArea(
       child: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF2563EB),
-              ),
+              child: CircularProgressIndicator(color: AppTheme.primary),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -611,21 +687,17 @@ class _ProfilePageState extends State<_ProfilePage> {
                         onPressed: () {},
                         icon: const Icon(Icons.arrow_back_ios_new, size: 20),
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.white,
+                          backgroundColor: Theme.of(context).cardColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Center(
                           child: Text(
                             'Profile',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF0F172A),
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
                       ),
@@ -633,17 +705,16 @@ class _ProfilePageState extends State<_ProfilePage> {
                     ],
                   ),
                   const SizedBox(height: 28),
-
                   Stack(
                     children: [
                       Container(
                         width: 90,
                         height: 90,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2563EB),
+                          color: AppTheme.primary,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: const Color(0xFFBFDBFE),
+                            color: AppTheme.primaryLight,
                             width: 3,
                           ),
                         ),
@@ -665,7 +736,7 @@ class _ProfilePageState extends State<_ProfilePage> {
                           width: 28,
                           height: 28,
                           decoration: const BoxDecoration(
-                            color: Color(0xFF2563EB),
+                            color: AppTheme.primary,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -677,28 +748,17 @@ class _ProfilePageState extends State<_ProfilePage> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 12),
-
                   Text(
                     _name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A),
-                    ),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _email,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF64748B),
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-
                   const SizedBox(height: 24),
-
                   _ProfileField(label: 'FULL NAME', value: _name),
                   const SizedBox(height: 12),
                   _ProfileField(label: 'AGE', value: _age),
@@ -707,16 +767,17 @@ class _ProfilePageState extends State<_ProfilePage> {
                   const SizedBox(height: 12),
                   _ProfileField(label: 'OCCUPATION', value: _occupation),
                   const SizedBox(height: 12),
-
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                      border: Border.all(
+                        color: Theme.of(context).dividerColor,
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -724,35 +785,77 @@ class _ProfilePageState extends State<_ProfilePage> {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFEFF6FF),
+                            color: AppTheme.primaryLight,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
                             Icons.lock_outline,
-                            color: Color(0xFF2563EB),
+                            color: AppTheme.primary,
                             size: 18,
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
+                        Text(
                           'Change Password',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF0F172A),
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const Spacer(),
                         const Icon(
                           Icons.chevron_right,
-                          color: Color(0xFF94A3B8),
+                          color: AppTheme.textSecondary,
                         ),
                       ],
                     ),
                   ),
-
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: Theme.of(context).dividerColor,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Appearance',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 12),
+                        RadioListTile<ThemeMode>(
+                          contentPadding: EdgeInsets.zero,
+                          value: ThemeMode.light,
+                          groupValue: _selectedTheme,
+                          onChanged: (value) {
+                            if (value != null) _changeTheme(value);
+                          },
+                          title: const Text('Light Mode'),
+                        ),
+                        RadioListTile<ThemeMode>(
+                          contentPadding: EdgeInsets.zero,
+                          value: ThemeMode.dark,
+                          groupValue: _selectedTheme,
+                          onChanged: (value) {
+                            if (value != null) _changeTheme(value);
+                          },
+                          title: const Text('Dark Mode'),
+                        ),
+                        RadioListTile<ThemeMode>(
+                          contentPadding: EdgeInsets.zero,
+                          value: ThemeMode.system,
+                          groupValue: _selectedTheme,
+                          onChanged: (value) {
+                            if (value != null) _changeTheme(value);
+                          },
+                          title: const Text('Use Device Setting'),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 24),
-
                   SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -768,13 +871,13 @@ class _ProfilePageState extends State<_ProfilePage> {
                       },
                       icon: const Icon(
                         Icons.logout,
-                        color: Color(0xFFEF4444),
+                        color: AppTheme.error,
                         size: 18,
                       ),
                       label: const Text(
                         'Sign Out',
                         style: TextStyle(
-                          color: Color(0xFFEF4444),
+                          color: AppTheme.error,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -782,7 +885,7 @@ class _ProfilePageState extends State<_ProfilePage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        side: const BorderSide(color: Color(0xFFEF4444)),
+                        side: const BorderSide(color: AppTheme.error),
                       ),
                     ),
                   ),
@@ -805,45 +908,38 @@ class _ProfileField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Color(0xFF94A3B8),
-                    letterSpacing: 0.5,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppTheme.textSecondary,
+                      letterSpacing: 0.5,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF0F172A),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const Icon(
-            Icons.edit_outlined,
-            color: Color(0xFF2563EB),
-            size: 18,
-          ),
-        ],
+            const Icon(
+              Icons.edit_outlined,
+              color: AppTheme.primary,
+              size: 18,
+            ),
+          ],
+        ),
       ),
     );
   }

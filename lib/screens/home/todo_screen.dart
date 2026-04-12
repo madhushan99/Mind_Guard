@@ -32,11 +32,12 @@ class _TodoScreenState extends State<TodoScreen> {
   Future<void> _loadTasks() async {
     try {
       final tasks = await DataService().getTasks();
-      if (mounted)
+      if (mounted) {
         setState(() {
           _tasks = tasks;
           _isLoading = false;
         });
+      }
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -58,10 +59,11 @@ class _TodoScreenState extends State<TodoScreen> {
     } catch (e) {
       // revert on error
       setState(() {
-        if (task.isCompleted)
+        if (task.isCompleted) {
           task.uncomplete();
-        else
+        } else {
           task.complete();
+        }
       });
     }
   }

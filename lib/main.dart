@@ -15,8 +15,25 @@ void main() async {
   runApp(const MindGuardApp());
 }
 
-class MindGuardApp extends StatelessWidget {
+class MindGuardApp extends StatefulWidget {
   const MindGuardApp({super.key});
+
+  static _MindGuardAppState? of(BuildContext context) {
+    return context.findAncestorStateOfType<_MindGuardAppState>();
+  }
+
+  @override
+  State<MindGuardApp> createState() => _MindGuardAppState();
+}
+
+class _MindGuardAppState extends State<MindGuardApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void changeTheme(ThemeMode mode) {
+    setState(() {
+      _themeMode = mode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +41,8 @@ class MindGuardApp extends StatelessWidget {
       title: 'Mind Guard',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: _themeMode,
       home: const SplashScreen(),
     );
   }

@@ -22,11 +22,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<void> _loadLogs() async {
     try {
       final logs = await DataService().getStressLogs();
-      if (mounted)
+      if (mounted) {
         setState(() {
           _logs = logs;
           _isLoading = false;
         });
+      }
     } catch (_) {
       if (mounted) setState(() => _isLoading = false);
     }
