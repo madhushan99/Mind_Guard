@@ -53,6 +53,7 @@ class AuthService {
     await _supabase.from('profiles').upsert({
       'id': userId,
       'name': name,
+      'email': currentUser?.email,
       'age': age,
       'occupation': occupation,
     });
@@ -66,7 +67,7 @@ class AuthService {
     try {
       final response = await _supabase
           .from('profiles')
-          .select('id, name, age, occupation, created_at')
+          .select('id, name, email, age, occupation, created_at')
           .eq('id', userId)
           .maybeSingle();
 
