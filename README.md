@@ -76,3 +76,90 @@ The codebase deliberately applies core OOP principles:
 | *Custom types (enums)* | The Mood enum (happy, neutral, stressed, sad) replaces raw strings, preventing invalid values at the type level. |
 | *Singleton pattern* | AuthService, DataService, and QuestionBank each use a private constructor + factory constructor so the whole app shares one instance and one consistent session state. |
 
+## Database Schema
+
+The Supabase Postgres backend has four tables, all protected by *Row Level Security (RLS)* so a user can only ever read or write their own data:
+
+| Table | Purpose |
+|---|---|
+| profiles | One row per user — name, age, occupation. Linked 1:1 to auth.users. |
+| stress_logs | Daily check-in entries — sleep/work/screen/exercise stats, mood, and stress score. |
+| wellness_tasks | User-created wellness checklist items with completion state. |
+| doctors | Public read-only directory of clinical professionals. |
+
+All RLS policies check auth.uid() = user_id (or = id for profiles), ensuring the public Supabase anon key alone can never expose another user's data.
+
+## Project Structure
+
+
+lib/
+├── main.dart                     # App entry point, Supabase initialization
+├── models/
+│   ├── base_model.dart           # Abstract base class (abstraction)
+│   ├── user_model.dart           # Encapsulation + validated setters
+│   ├── stress_log_model.dart     # Inheritance, polymorphism, Mood enum
+│   ├── wellness_task_model.dart  # Inheritance, polymorphism
+│   ├── doctor_model.dart
+│   └── question_model.dart
+├── services/
+│   ├── auth_service.dart         # Singleton — auth & profile calls
+│   ├── data_service.dart         # Singleton — stress logs & tasks
+│   ├── doctor_service.dart       # Doctor directory queries
+│   ├── question_bank.dart        # Singleton — question bank data
+│   └── supabase_config.dart      # Supabase URL & anon key
+├── screens/
+│   ├── auth/                     # Splash, login, register, verify email
+│   ├── onboarding/                # Profile setup
+│   └── home/                     # Home, log data, stress check, history, to-do, clinical support
+└── theme/
+    └── app_theme.dart
+
+
+## Getting Started
+
+### Prerequisites
+- Flutter SDK (Dart ^3.6.2)
+- A Supabase project (free tier is enough)
+
+### Setup
+
+1. Clone the repository and install dependencies:
+   bash
+   flutter pub get
+   
+2. Create a Supabase project, then run the schema and RLS SQL scripts to create the profiles, stress_logs, wellness_tasks, and doctors tables.
+3. Add your Supabase credentials in lib/services/supabase_config.dart:
+   dart
+   class SupabaseConfig {
+     static const String supabaseUrl = 'YOUR_SUPABASE_PROJECT_URL';
+     static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+   }
+   
+   > For anything beyond local testing, prefer passing these via --dart-define instead of hardcoding them, so real keys never end up committed to source control.
+4. Run the app:
+   bash
+   flutter run
+   
+
+## Security Notes
+
+- Every table has *Row Level Security enabled* — this is non-negotiable. The Supabase anon key is meant to be public; RLS is what actually protects user data.
+- Never commit the service_role key anywhere in the Flutter app — only the anon key belongs on the client.
+- Email confirmation is enabled on sign-up; users must verify their email before their first login.
+
+## Team
+
+| Name |
+|---|
+| G.W.P. Madhushan |
+| B.S.M.P. Munasinghe |
+| P.M.D. Bandara |
+| D.M.S.P. Wijesekara |
+| D.M.T. De Zoysa |
+
+## Future Work
+
+- AI-assisted stress prediction based on historical daily logs
+- Deep-linked email verification that returns straight into the app
+- Push notification reminders for daily check-ins
+- In-app appointment booking with clinical professionals
