@@ -1,17 +1,36 @@
-# mind_guard1
+# MindGuard 🛡️
 
-A new Flutter project.
+*MindGuard* is a mental wellness tracking mobile application built with Flutter and Supabase. It helps users build healthy daily habits, track their mood and stress levels over time, complete simple wellness tasks, and connect with verified clinical professionals when they need extra support.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Table of Contents
 
-A few resources to get you started if this is your first Flutter project:
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [OOP Concepts & Design Patterns](#oop-concepts--design-patterns)
+- [Database Schema](#database-schema)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Security Notes](#security-notes)
+- [Team](#team)
+- [Future Work](#future-work)
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Overview
+
+Stress builds up quietly — through poor sleep, long work hours, too much screen time, and too little exercise. MindGuard makes it easy to notice these patterns early by turning a daily 30-second check-in into a simple, visual picture of your mental wellness over time.
+
+## Features
+
+- 🔐 *Secure accounts* — email/password sign-up with email verification, powered by Supabase Auth.
+- 📝 *Daily habit logging* — log sleep hours, work hours, screen time, and exercise duration each day.
+- 😊 *Mood & stress tracking* — record your mood (happy, neutral, stressed, sad) alongside a computed stress score.
+- 📊 *History view* — look back at past daily logs to spot trends over time.
+- ✅ *Wellness checklist* — simple daily tasks you can add, complete, and track.
+- 🩺 *Clinical support directory* — browse verified doctors with their specialties, ratings, and contact details.
+- 👤 *Profile management* — edit your name, age, and occupation, synced to your account.
+
